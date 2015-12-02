@@ -16,7 +16,7 @@ At a high level, computers do four things:
 -   communicate with each other
 -   interact with us
 
-They can do the last of these in many different ways,
+They can do the last of these in various different ways,
 including direct brain-computer links and speech interfaces.
 Since these are still in their infancy,
 most of us use windows, icons, mice, and pointers.
