@@ -46,7 +46,7 @@ Let's read our file now. There are a few different ways of doing this, the simpl
 cat test.txt
 ```
 ```{.output}
-
+This is the contents of our test file.
 ```
 Although `cat` may not seem like an intuitive command with which to open files, it stands for "concatenate"- giving it multiple arguments will print out one file followed by the contents of the next, and so on.
 
@@ -54,7 +54,8 @@ Although `cat` may not seem like an intuitive command with which to open files, 
 cat test.txt test.txt
 ```
 ```{.output}
-
+This is the contents of our test file.
+This is the contents of our test file.
 ```
 
 We've successfully created a file. What about a directory? We've actually done this before, using `mkdir`.
@@ -62,6 +63,8 @@ We've successfully created a file. What about a directory? We've actually done t
 mkdir files
 ls
 ```
+
+## Moving and copying files
 
 To practice moving files, we will move `test.txt` to that directory with `mv` (move). `mv`'s syntax is relatively simple, and works for both files and directories `mv <file/directory> <path to new location>`
 
@@ -90,6 +93,29 @@ newname.testfile
 >
 > In the last example, we changed both a file's name and extension at the same time. On UNIX systems, file extensions (like .txt) are arbitrary. A file is a .txt file only because we say it is. Changing the name or extension of the file will *never* change a file's contents, so you are free to rename things as you wish.
 
-# Practice problems
+What if we want to copy a file, instead of simply renaming or moving it? Use `cp`. This command has to different uses that work in the same way as `mv`:
+
++ Copy to same directory (new name): `cp <file> <newFilename>`
+
++ Copy to other directory (same name): `cp <file> <directory>`
+
+Let's try this out.
+```{.bash}
+cp newname.testfile copy.testfile
+ls
+cp newname.testfile ..
+cd ..
+ls
+```
+```{.output}
+newname.testfile copy.testfile
+files Documents newname.testfile
+```
+
+## Removing files
+
+We've begun to clutter up our workspace with all of the directories and stuff we've been making. Let's learn how to get rid of them.
+
+## Practice problems
 
 Sometimes it's not practical to read an entire file with `cat`- the file might be way too large or take a long time to open. As an example, we are going to look at a large and complex file type used in bioinformatics.
