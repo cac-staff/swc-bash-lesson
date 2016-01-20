@@ -124,6 +124,21 @@ files</code></pre>
 <p>Let’s grab and unpack an example file for us to use with <code>wget</code> (<code>wget &lt;link&gt;</code> downloads a file from a link):</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">wget</span> ftp://ftp.ensembl.org/pub/release-77/gtf/drosophila_melanogaster/Drosophila_melanogaster.BDGP5.77.gtf.gz
 <span class="kw">gunzip</span> Drosophila_melanogaster.BDGP5.77.gtf.gz</code></pre></div>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="unzipping-files"><span class="glyphicon glyphicon-pushpin"></span>Unzipping files</h2>
+</div>
+<div class="panel-body">
+<p>We just unzipped a .gz file for this example. What if we run into other file formats that we need to unzip? Just use the handy reference below:</p>
+<ul>
+<li><code>gunzip</code> unzips .gz files</li>
+<li><code>unzip</code> unzips .zip files</li>
+<li><code>unrar</code> unzips .rar files</li>
+<li><code>tar -xzf</code> unzips .tar.gz files</li>
+<li><code>tar -xjf</code> unzips .tar.bz2 files</li>
+</ul>
+</div>
+</aside>
 <p>We just downloaded every annotated feature in the <em>Drosophila melanogaster</em> genome. It’s a huge file- what happens if we run <code>cat</code> on it? (Press <code>Ctrl + C</code> to stop it).</p>
 <p>So, <code>cat</code> really sucks when reading big files. What are the alternatives? Try all of these out and see which ones you like best!</p>
 <ul>

@@ -159,6 +159,16 @@ wget ftp://ftp.ensembl.org/pub/release-77/gtf/drosophila_melanogaster/Drosophila
 gunzip Drosophila_melanogaster.BDGP5.77.gtf.gz
 ```
 
+> ## Unzipping files {.callout}
+>
+> We just unzipped a .gz file for this example. What if we run into other file formats that we need to unzip? Just use the handy reference below:
+>
+> * `gunzip` unzips .gz files
+> * `unzip` unzips .zip files
+> * `unrar` unzips .rar files
+> * `tar -xzf` unzips .tar.gz files
+> * `tar -xjf` unzips .tar.bz2 files
+
 We just downloaded every annotated feature in the *Drosophila melanogaster* genome. It's a huge file- what happens if we run `cat` on it? (Press `Ctrl + C` to stop it).
 
 So, `cat` really sucks when reading big files. What are the alternatives? Try all of these out and see which ones you like best!
@@ -169,4 +179,4 @@ So, `cat` really sucks when reading big files. What are the alternatives? Try al
 
 + `more <file>` - Opens a file and display as much as possible on-screen. You can scroll with `Enter` or the arrow keys on your keyboard. Press `q` to close the viewer. Everything that you've looked at remains on screen.
 
-+ `less <file>` - Identical to `more`, except what you've looked at get's hidden once you close `less` with `q`. Remember, `less` is `more`. 
++ `less <file>` - Identical to `more`, except what you've looked at get's hidden once you close `less` with `q`. Remember, `less` is `more`.
