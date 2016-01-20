@@ -94,9 +94,44 @@ This is the contents of our test file.</code></pre>
 <pre class="output"><code>newname.testfile copy.testfile
 files Documents newname.testfile</code></pre>
 <h2 id="removing-files">Removing files</h2>
-<p>We’ve begun to clutter up our workspace with all of the directories and stuff we’ve been making. Let’s learn how to get rid of them.</p>
-<h2 id="practice-problems">Practice problems</h2>
-<p>Sometimes it’s not practical to read an entire file with <code>cat</code>- the file might be way too large or take a long time to open. As an example, we are going to look at a large and complex file type used in bioinformatics.</p>
+<p>We’ve begun to clutter up our workspace with all of the directories and stuff we’ve been making. Let’s learn how to get rid of them. One important note before we start… when you delete a file on UNIX systems, they are gone <strong>forever</strong>. There is no “recycle bin” or “trash”. Once a file is deleted, it is gone, never to return. So be <em>very</em> careful when deleting files.</p>
+<p>Files are deleted with <code>rm &lt;file&gt; [moreFiles]</code>. To delete the <code>newname.testfile</code> in our current directory:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ls</span>
+<span class="kw">rm</span> newname.testfile
+<span class="kw">ls</span></code></pre></div>
+<pre class="output"><code>files Documents newname.testfile
+files Documents</code></pre>
+<p>That was simple enough. Directories are deleted in a similar manner using <code>rmdir</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ls</span>
+<span class="kw">rmdir</span> Documents
+<span class="kw">rmdir</span> files
+<span class="kw">ls</span></code></pre></div>
+<pre class="output"><code>files Documents
+rmdir: failed to remove `files/&#39;: Directory not empty
+files</code></pre>
+<p>What happened? As it turns out, <code>rmdir</code> is unable to remove directories that have stuff in them. To delete a directory and everything inside it, we will use a special variant of <code>rm</code>, <code>rm -rf &lt;directory&gt;</code>. This is probably the scariest command on UNIX- it will force delete a directory and all of its contents without prompting. <strong>ALWAYS</strong> double check your typing before using it… if you leave out the arguments, it will attempt to delete everything on your file system that you have permission to delete. So when deleting directories be very, very careful.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="what-happens-when-you-use-rm--rf-accidentally"><span class="glyphicon glyphicon-pushpin"></span>What happens when you use <code>rm -rf</code> accidentally</h2>
+</div>
+<div class="panel-body">
+<p>Steam is a major online sales platform for PC videogames with over 125 million users. In 2015, it generated over 3.5 billion dollars in sales. Despite this, it hasn’t always had the most stable or error-free code.</p>
+<p>In January 2015, user kevyin on GitHub reported that Steam’s Linux client had deleted every file on his computer. It turned out that one of the Steam programmers had added the following line: <code>rm -rf &quot;$STEAMROOT/&quot;*</code>. Due to the way that Steam was set up, the variable <code>$STEAMROOT</code> was never initialized, meaning the statement evaluated to <code>rm -rf /*</code>. This coding error in the Linux client meant that Steam recursively deleted every single file when run in certain scenarios (including connected external hard drives). Moral of the story: <strong>be very careful</strong> when using rm -rf!</p>
+</div>
+</aside>
+<h2 id="practice-problem---looking-at-files">Practice problem - looking at files</h2>
+<p>Sometimes it’s not practical to read an entire file with <code>cat</code>- the file might be way too large, take a long time to open, or maybe we want to only look at a certain part of the file. As an example, we are going to look at a large and complex file type used in bioinformatics- a .gtf file. The GTF2 format is commonly used to describe the location of genetic features in a genome.</p>
+<p>Let’s grab and unpack an example file for us to use with <code>wget</code> (<code>wget &lt;link&gt;</code> downloads a file from a link):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">wget</span> ftp://ftp.ensembl.org/pub/release-77/gtf/drosophila_melanogaster/Drosophila_melanogaster.BDGP5.77.gtf.gz
+<span class="kw">gunzip</span> Drosophila_melanogaster.BDGP5.77.gtf.gz</code></pre></div>
+<p>We just downloaded every annotated feature in the <em>Drosophila melanogaster</em> genome. It’s a huge file- what happens if we run <code>cat</code> on it? (Press <code>Ctrl + C</code> to stop it).</p>
+<p>So, <code>cat</code> really sucks when reading big files. What are the alternatives? Try all of these out and see which ones you like best!</p>
+<ul>
+<li><p><code>head &lt;file&gt;</code> - Print the top 5 lines to console. You can control the number of lines you see with <code>-n [numberOfLines]</code>.</p></li>
+<li><p><code>tail &lt;file&gt;</code> - Same as <code>head</code>, but prints the last five lines in a file to the console.</p></li>
+<li><p><code>more &lt;file&gt;</code> - Opens a file and display as much as possible on-screen. You can scroll with <code>Enter</code> or the arrow keys on your keyboard. Press <code>q</code> to close the viewer. Everything that you’ve looked at remains on screen.</p></li>
+<li><p><code>less &lt;file&gt;</code> - Identical to <code>more</code>, except what you’ve looked at get’s hidden once you close <code>less</code> with <code>q</code>. Remember, <code>less</code> is <code>more</code>.</p></li>
+</ul>
         </div>
       </div>
       </article>
