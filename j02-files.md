@@ -173,7 +173,7 @@ We just downloaded every annotated feature in the *Drosophila melanogaster* geno
 
 So, `cat` really sucks when reading big files. What are the alternatives? Try all of these out and see which ones you like best!
 
-+ `head <file>` - Print the top 5 lines to console. You can control the number of lines you see with `-n [numberOfLines]`.
++ `head <file>` - Print the top 10 lines in a file to the console. You can control the number of lines you see with `-n [numberOfLines]`.
 
 + `tail <file>` - Same as `head`, but prints the last five lines in a file to the console.
 

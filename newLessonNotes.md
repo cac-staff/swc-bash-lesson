@@ -43,7 +43,7 @@ get rid of challenge problems at end and replace with something more relevant
 
 skim down examples, some are good
 
-##05-scripts
+##04-scripts
 
 + comments
 + they are running scripts with "bash" first
@@ -54,7 +54,7 @@ skim down examples, some are good
 
 script reading comprehension examples are great
 
-##04-loops
+##05-loops
 
 + introduce shell variables first with echo
 + basic for loops
