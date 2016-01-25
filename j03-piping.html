@@ -120,8 +120,96 @@
 </div>
 </section>
 <hr />
-<h2 id="piping-output">Piping output</h2>
-<p>Each of the commands we’ve used so far does only a very small amount of stuff. However, it’s extremely easy to chain UNIX commands together in new and awesome ways.</p>
+<h2 id="redirecting-output">Redirecting output</h2>
+<p>Each of the commands we’ve used so far does only a very small amount of stuff. However, it’s extremely easy to chain these simple UNIX commands together to do complicated stuff!</p>
+<p>For our first foray into “piping”, or redirecting, these commands we are going to use the <code>&gt;</code> operator to write output to a file. When using <code>&gt;</code>, whatever is on the left of the <code>&gt;</code> is written to the filename you specify on the right of the arrow. The actual syntax looks like <code>command &gt; filename</code>.</p>
+<p>Let’s try several basic usages of <code>&gt;</code>. <code>echo</code> simply prints back, or echoes whatever you type after it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">echo</span> <span class="st">&quot;this is a test&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;this is a test&quot;</span> <span class="kw">&gt;</span> test.txt
+<span class="kw">ls</span>
+<span class="kw">cat</span> test.txt</code></pre></div>
+<pre class="output"><code>this is a test
+
+dmel_unique_protein_isoforms_fb_2016_01.tsv  fb_synonym_fb_2016_01.tsv
+Drosophila_melanogaster.BDGP5.77.gtf         gene_association.fb
+fastq                                        test.txt
+
+this is a test</code></pre>
+<p>Awesome, let’s try that with a more complicated command, like <code>wc -l</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">wc</span> -l * <span class="kw">&gt;</span> word_counts.txt
+<span class="kw">cat</span> word_counts.txt</code></pre></div>
+<pre class="callout"><code>wc: fastq: Is a directory
+
+22129 dmel_unique_protein_isoforms_fb_2016_01.tsv
+471308 Drosophila_melanogaster.BDGP5.77.gtf
+    0 fastq
+1304914 fb_synonym_fb_2016_01.tsv
+106290 gene_association.fb
+    1 test.txt
+1904642 total</code></pre>
+<p>Notice how we still got some output to the console even though we “piped” the output to a file. Our expected output still went to the file, but how did the error message get skipped and not go to the file?</p>
+<p>This phenomena is an artifact of how UNIX systems are built. There are 3 input/output streams for every UNIX program you will run: <code>stdin</code>, <code>stdout</code>, and <code>stderr</code>.</p>
+<p>Let’s dissect these three streams of input/output in the command we just ran: <code>wc -l * &gt; word_counts.txt</code></p>
+<ul>
+<li><p><code>stdin</code> is the input to a program. In the command we just ran, <code>stdin</code> is represented by <code>*</code>, which is simply every filename in our current directory.</p></li>
+<li><p><code>stdout</code> contains the actual, expected output. In this case, <code>&gt;</code> redirected <code>stdout</code> to the file <code>word_counts.txt</code>.</p></li>
+<li><p><code>stderr</code> typically contains error messages and other information that doesn’t quite fit into the category of “output”. If we insist on redirecting both <code>stdout</code> and <code>stderr</code> to the same file we would use <code>&amp;&gt;</code> instead of <code>&gt;</code>.</p></li>
+</ul>
+<p>Knowing what we know now, let’s try re-running the command, and send all of the output (including the error message) to the same <code>word_counts.txt</code> files as before.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">wc</span> -l * <span class="kw">&amp;&gt;</span> word_counts.txt</code></pre></div>
+<p>Notice how there was no output to the console that time. Let’s check that the error message went to the file like we specified.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cat</span> word_counts.txt</code></pre></div>
+<pre class="output"><code>22129 dmel_unique_protein_isoforms_fb_2016_01.tsv
+471308 Drosophila_melanogaster.BDGP5.77.gtf
+wc: fastq: Is a directory
+    0 fastq
+1304914 fb_synonym_fb_2016_01.tsv
+106290 gene_association.fb
+    1 test.txt
+    7 word_counts.txt
+1904649 total</code></pre>
+<p>Success! The <code>wc: fastq: Is a directory</code> error message was written to the file. Also, note how the file was silently overwritten by directing output to the same place as before. Sometimes this is not the behavior we want. How do we append (add) to a file instead of overwriting it?</p>
+<p>Appending to a file is done the same was as redirecting output. However, instead of <code>&gt;</code>, we will use <code>&gt;&gt;</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">echo</span> <span class="st">&quot;We want to add this sentence to the end of our file&quot;</span> <span class="kw">&gt;&gt;</span> word_counts.txt
+<span class="kw">cat</span> word_counts.txt</code></pre></div>
+<pre class="output"><code>22129 dmel_unique_protein_isoforms_fb_2016_01.tsv
+471308 Drosophila_melanogaster.BDGP5.77.gtf
+    0 fastq
+1304914 fb_synonym_fb_2016_01.tsv
+106290 gene_association.fb
+    1 test.txt
+1904642 total
+We want to add this sentence to the end of our file</code></pre>
+<hr />
+<h2 id="chaining-commands-together">Chaining commands together</h2>
+<p>We now know how to redirect <code>stdout</code> and <code>stderr</code> to files. We can actually take this a step further and redirect output (<code>stdout</code>) from one command to serve as the input (<code>stdin</code>) for the next. To do this, we use the <code>|</code> (pipe) operator.</p>
+<p><code>grep</code> is an extremely useful command. It finds things for us within files. Basic usage (there are a lot of options for more clever things, see the <code>man</code> page) uses the syntax <code>grep &lt;whatToFind&gt; &lt;fileToSearch&gt;</code>. Let’s use <code>grep</code> to find all of the entries pertaining to the <code>Act5C</code> gene in <em>Drosophila melanogaster</em>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">grep</span> Act5C Drosophila_melanogaster.BDGP5.77.gtf</code></pre></div>
+<p>The output is nearly unintelligible since there is so much of it. Let’s send the output of that <code>grep</code> command to <code>head</code> so we can just take a peek at the first line.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">grep</span> Act5C Drosophila_melanogaster.BDGP5.77.gtf <span class="kw">|</span> <span class="kw">head</span> -n 1</code></pre></div>
+<pre class="output"><code>X       FlyBase gene    5794894 5799261 .       +       .       gene_id &quot;FBgn0000042&quot;; gene_version &quot;5&quot;; gene_name &quot;Act5C&quot;; gene_source &quot;FlyBase&quot;; gene_biotype &quot;protein_coding&quot;;</code></pre>
+<p>Nice work, we’ve successfully send the output from one program to another. Let’s try counting the number of entries for Act5C with <code>wc -l</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">grep</span> Act5C Drosophila_melanogaster.BDGP5.77.gtf <span class="kw">|</span> <span class="kw">wc</span> -l</code></pre></div>
+<pre class="output"><code>37</code></pre>
+<p>Note that this is just the same as redirecting output to a file, then reading the number of lines from that file.</p>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="writing-commands-using-pipes"><span class="glyphicon glyphicon-pencil"></span>Writing commands using pipes</h2>
+</div>
+<div class="panel-body">
+<p>How many files are there in the “fastq” directory we made earlier? (Use the shell to do this.)</p>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="reading-from-compressed-files"><span class="glyphicon glyphicon-pencil"></span>Reading from compressed files</h2>
+</div>
+<div class="panel-body">
+<p>Let’s compress one of our files using gzip.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">gzip</span> gene_association.fb</code></pre></div>
+<p><code>gunzip -c</code> prints decompressed output to the console instead of decompressing the file. Using <code>gunzip -c</code>, can you write a command to take a look at the top few lines of the gene_association.fb.gz file (without decompressing the file itself)?</p>
+</div>
+</section>
         </div>
       </div>
       </article>

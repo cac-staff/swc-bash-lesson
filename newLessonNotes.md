@@ -68,8 +68,5 @@ use echo as a debugging tools
 + find lessons are good
 + shell expansion of *
 + $(command)
-+ wget
-+ unzipping files
 + awk/sed?
 + file parsing?
-+ logfile creation?
