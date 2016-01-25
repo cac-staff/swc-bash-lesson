@@ -49,18 +49,14 @@ skim down examples, some are good
 + they are running scripts with "bash" first
 + #! in scripts
 + permissions/chmod/sudo
++ introduce shell variables first with echo
 + shell script arguments - $@ - all arguments
++ basic for loops
+
++ concatenation with shell variables, {} for grouping
 + use quotes to make things robust vs. spaces
 
 script reading comprehension examples are great
-
-##05-loops
-
-+ introduce shell variables first with echo
-+ basic for loops
-+ concatenation with shell variables, {} for grouping
-
-use echo as a debugging tools
 
 ##06-find
 

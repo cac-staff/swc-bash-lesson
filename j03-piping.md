@@ -1,7 +1,7 @@
 ---
 layout: page
 title: The Unix Shell
-subtitle: Wildcards and Piping
+subtitle: Wildcards and piping
 minutes: 15
 ---
 
