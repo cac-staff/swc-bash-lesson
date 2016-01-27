@@ -33,6 +33,24 @@ Our file should now look like this:
 echo "Our script worked!"
 ```
 
+Ready to run our program? There's one last thing we need to do. Before a file can be run, it needs "permission" to run. Let's look at our file's permissions with `ls -l` (remember this from earlier?).
+
+```{.bash}
+ls -l
+```
+```{.output}
+-rw-r--r--. 1 hpcxxxx hpcgyyyy        39 Jan 27 10:45 demo.sh
+-rw-r-----. 1 hpcxxxx hpcgyyyy    721242 Jan 25 11:09 dmel_unique_protein_isoforms_fb_2016_01.tsv
+-rw-r--r--. 1 hpcxxxx hpcgyyyy 159401627 Jan 20 14:32 Drosophila_melanogaster.BDGP5.77.gtf
+drwxr-xr-x. 2 hpcxxxx hpcgyyyy        18 Jan 25 13:53 fastq
+-rw-r-----. 1 hpcxxxx hpcgyyyy  56654230 Jan 25 11:09 fb_synonym_fb_2016_01.tsv
+-rw-r-----. 1 hpcxxxx hpcgyyyy   1830516 Jan 25 11:09 gene_association.fb.gz
+-rw-r--r--. 1 hpcxxxx hpcgyyyy        15 Jan 25 13:56 test.txt
+-rw-r--r--. 1 hpcxxxx hpcgyyyy       270 Jan 25 14:40 word_counts.txt
+```
+
+So what is this
+
 > ## Tricks for working with file extensions {.callout}
 > Working with file extensions can be tough sometimes. Here are a couple examples that demonstrate how to retrieve various parts of a filename.
 >
