@@ -50,6 +50,7 @@ skim down examples, some are good
 + #! in scripts
 + permissions/chmod/sudo
 + introduce shell variables first with echo
++ $(command)
 + shell script arguments - $@ - all arguments
 + basic for loops
 
@@ -60,9 +61,7 @@ script reading comprehension examples are great
 
 ##06-find
 
-+ grep example is hilarious/great, maybe rewrite with a gtf file
 + find lessons are good
 + shell expansion of *
-+ $(command)
 + awk/sed?
 + file parsing?

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Software Carpentry: The Unix Shell</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <link rel="alternate" type="application/rss+xml" title="Software Carpentry Blog" href="http://software-carpentry.org/feed.xml"/>
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <a href="http://software-carpentry.org" title="Software Carpentry">
+          <img alt="Software Carpentry banner" src="img/software-carpentry-banner.png" />
+        </a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">The Unix Shell</h1></a>
+          <h2 class="subtitle">Shell scripts and variables</h2>
+          <section class="objectives panel panel-warning">
+<div class="panel-heading">
+<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+</div>
+<div class="panel-body">
+<ul>
+<li>Learn what a script is</li>
+<li>Write simple shell scripts</li>
+<li>Understand and manipulate UNIX permissions</li>
+<li>What is a comment?</li>
+<li>Understand shell variables and how to use them</li>
+<li>What is $PATH?</li>
+<li>Write a simple for loop</li>
+</ul>
+</div>
+</section>
+<p>We now know a whole bunch of UNIX commands. Wouldn’t it be great if we could save certain commands so that we could run them later or not have to type them out again? As it turns out, this is extremely easy to do. Saving a list of commands to a file is called a “shell script”. These shell scripts can be run whenever we want, and are a great way to automate our work.</p>
+<p>So how do we write a shell script, exactly? It turns out we can do this with a simple text editor. Start editing a file called “demo.sh” (<code>nano demo.sh</code>). The “.sh” is simply the standard file extension for shell scripts that people use.</p>
+<p>Our shell script will have two parts:</p>
+<ul>
+<li><p>On the very first line, add <code>#!/bin/bash</code>. The <code>#!</code> (pronounced “hash-bang”) tells our computer what program to run our script with. In this case, we are telling it to run our script with our command-line shell (what we’ve been doing everything in so far). If we wanted our script to be run with something else, like Python, we could add <code>#!/usr/bin/python</code></p></li>
+<li><p>Now, anywhere below the first line, add <code>echo &quot;Our script worked!&quot;</code>. When our script runs, <code>echo</code> will happily print out <code>Our script worked!</code>.</p></li>
+</ul>
+<p>Our file should now look like this:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="kw">echo</span> <span class="st">&quot;Our script worked!&quot;</span></code></pre></div>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="tricks-for-working-with-file-extensions"><span class="glyphicon glyphicon-pushpin"></span>Tricks for working with file extensions</h2>
+</div>
+<div class="panel-body">
+<p>Working with file extensions can be tough sometimes. Here are a couple examples that demonstrate how to retrieve various parts of a filename.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">FILE=</span><span class="st">&quot;example.tar.gz&quot;</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">${FILE%%</span>.*<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">example</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">${FILE%</span>.*<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">example.tar</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">${FILE#</span>*.<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">tar.gz</span>
+<span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">${FILE##</span>*.<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">gz</span></code></pre></div>
+</div>
+</aside>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+        <a class="label swc-blue-bg" href="http://software-carpentry.org">Software Carpentry</a>
+        <a class="label swc-blue-bg" href="https://github.com/swcarpentry/shell-novice">Source</a>
+        <a class="label swc-blue-bg" href="mailto:admin@software-carpentry.org">Contact</a>
+        <a class="label swc-blue-bg" href="LICENSE.html">License</a>
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+  </body>
+</html>
