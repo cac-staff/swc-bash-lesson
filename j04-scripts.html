@@ -27,7 +27,7 @@
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
                     <a href="index.html"><h1 class="title">The Unix Shell</h1></a>
-          <h2 class="subtitle">Shell scripts and variables</h2>
+          <h2 class="subtitle">Shell scripts, variables, and loops</h2>
           <section class="objectives panel panel-warning">
 <div class="panel-heading">
 <h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
@@ -39,7 +39,6 @@
 <li>Understand and manipulate UNIX permissions</li>
 <li>What is a comment?</li>
 <li>Understand shell variables and how to use them</li>
-<li>What is $PATH?</li>
 <li>Write a simple for loop</li>
 </ul>
 </div>
@@ -65,13 +64,150 @@ drwxr-xr-x. 2 hpcxxxx hpcgyyyy        18 Jan 25 13:53 fastq
 -rw-r-----. 1 hpcxxxx hpcgyyyy   1830516 Jan 25 11:09 gene_association.fb.gz
 -rw-r--r--. 1 hpcxxxx hpcgyyyy        15 Jan 25 13:56 test.txt
 -rw-r--r--. 1 hpcxxxx hpcgyyyy       270 Jan 25 14:40 word_counts.txt</code></pre>
-<p>So what is this</p>
+<p>That’s a huge amount of output. Let’s see if we can understand what it is, working left to right.</p>
+<ul>
+<li><strong>1st column - Permissions:</strong> On the very left side, there is a string of the characters <code>d</code>, <code>r</code>, <code>w</code>, <code>x</code>, and <code>-</code>. The <code>d</code> simply indicates if something is a directory (there is a <code>-</code> in that spot if it is not a directory). The other <code>r</code>, <code>w</code>, <code>x</code> bits indicates permission to <strong>R</strong>ead <strong>W</strong>rite and e<strong>X</strong>ecute a file.**** There are three columns of <code>rwx</code> permissions following the spot for <code>d</code>. If a user is missing a permission to do something, it’s indicated by a <code>-</code>.
+<ul>
+<li>The first column of <code>rwx</code> are the permissions that the owner has (the owner is indicated by hpcxxxx in the next column).</li>
+<li>The second set of <code>rwx</code>s are permissions that other members of the owner’s group share (indicated by hpcgyyyy).</li>
+<li>The third set of <code>rwx</code>s are permissions that anyone else with access to this computer can do with a file.</li>
+</ul></li>
+<li><p><strong>2nd column - Owner:</strong> This is the username of the user who owns the file. Their permissions are indicated in the first permissions column.</p></li>
+<li><p><strong>3rd column - Group:</strong> This is the user group of the user who owns the file. Members of this user group have permissions indicated in the second permissions column.</p></li>
+<li><p><strong>4th column - Size of file:</strong> This is simply the size of a file in bytes, or the number of files/subdirectories if we are looking at a directory.</p></li>
+<li><p><strong>5th column - Date last modified:</strong> This is the last date the file was modified.</p></li>
+<li><p><strong>6th column - Filename:</strong> Pretty self explanatory- this is the filename.</p></li>
+</ul>
+<p>So how do we change permissions? As I mentioned earlier, we need permission to execute our script.</p>
+<p>Changing permissions is done with <code>chmod</code>. To add executable permissions for all users we could use this:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">chmod</span> +x demo.sh
+<span class="kw">ls</span> -l</code></pre></div>
+<pre class="output"><code>-rwxr-xr-x. 1 hpcxxxx hpcgyyyy        39 Jan 27 10:45 demo.sh
+-rw-r-----. 1 hpcxxxx hpcgyyyy    721242 Jan 25 11:09 dmel_unique_protein_isoforms_fb_2016_01.tsv
+-rw-r--r--. 1 hpcxxxx hpcgyyyy 159401627 Jan 20 14:32 Drosophila_melanogaster.BDGP5.77.gtf
+drwxr-xr-x. 2 hpcxxxx hpcgyyyy        18 Jan 25 13:53 fastq
+-rw-r-----. 1 hpcxxxx hpcgyyyy  56654230 Jan 25 11:09 fb_synonym_fb_2016_01.tsv
+-rw-r-----. 1 hpcxxxx hpcgyyyy   1830516 Jan 25 11:09 gene_association.fb.gz
+-rw-r--r--. 1 hpcxxxx hpcgyyyy        15 Jan 25 13:56 test.txt
+-rw-r--r--. 1 hpcxxxx hpcgyyyy       270 Jan 25 14:40 word_counts.txt</code></pre>
+<p>Now that we have executable permissions for that file, we can run it. To run a script that we wrote ourselves, we need to specify the full path to the file, followed by the filename. We could do this one of two ways: either with our absolute path <code>/home/hpcxxxx/demo.sh</code>, or with the relative path <code>./demo.sh</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./demo.sh</span></code></pre></div>
+<pre class="output"><code>Our script worked!</code></pre>
+<p>Fantastic, we’ve written our first program! Before we go any further, let’s learn how to take notes inside our program using comments. A comment is indicated by the <code>#</code> character, followed by whatever we want. Comments do not get run. Let’s try out some comments in the console, then add one to our script!</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># This wont show anything</span></code></pre></div>
+<p>Now lets try adding this to our script with <code>nano</code>. Edit your script to look something like this:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="co"># This is a comment... they are nice for making notes!</span>
+<span class="kw">echo</span> <span class="st">&quot;Our script worked!&quot;</span></code></pre></div>
+<p>When we run our script, the output should be unchanged from before!</p>
+<hr />
+<h2 id="shell-variables">Shell variables</h2>
+<p>One important concept that we’ll need to cover are shell variables. Variables are a great way of saving information under a name you can access later. In programming languages like Python and R, variables can store pretty much anything you can think of. In the shell, they usually just store text. The best way to understand how they work is to see them in action.</p>
+<p>To set a variable, simply type in a name containing only letters, numbers, and underscores, followed by an <code>=</code> and whatever you want to put in the variable. Shell variable names are typically uppercase by convention.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">VAR=</span><span class="st">&quot;This is our variable&quot;</span></code></pre></div>
+<p>To use a variable, prefix its name with a <code>$</code> sign. Note that if we want to simply check what a variable is, we should use echo (or else the shell will try to run the contents of a variable).</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">echo</span> <span class="ot">$VAR</span></code></pre></div>
+<pre class="output"><code>This is our variable</code></pre>
+<p>Let’s try setting a variable in our script and then recalling its value as part of a command. We’re going to make it so our script runs <code>wc -l</code> on whichever file we specify with <code>FILE</code>.</p>
+<p>Our script:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="co"># set our variable to the name of our GTF file</span>
+<span class="ot">FILE=</span>Drosophila_melanogaster.BDGP5.77.gtf
+
+<span class="co"># call wc -l on our file</span>
+<span class="kw">wc</span> -l <span class="ot">$FILE</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./demo.sh</span></code></pre></div>
+<pre class="output"><code>471308 Drosophila_melanogaster.BDGP5.77.gtf</code></pre>
+<p>What if we wanted to do our little <code>wc -l</code> script on other files without having to change <code>$FILE</code> every time we want to use it? There is actually a special shell variable we can use in scripts that allows us to use arguments in our scripts (arguments are extra information that we can pass to our script, like the <code>-l</code> in <code>wc -l</code>).</p>
+<p>To use the first argument to a script, simply use <code>$1</code> (the second argument is <code>$2</code>, and so on). Let’s change our script to run <code>wc -l</code> on <code>$1</code> instead of <code>$FILE</code>. Note that we can also pass all of the arguments using <code>$@</code> (not going to use it in this lesson, but it’s something to be aware of).</p>
+<p>Our script:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="co"># call wc -l on our first argument</span>
+<span class="kw">wc</span> -l <span class="ot">$1</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./demo.sh</span> fb_synonym_fb_2016_01.tsv</code></pre></div>
+<pre class="output"><code>1304914 fb_synonym_fb_2016_01.tsv</code></pre>
+<p>Nice! One thing to be aware of when using variables: they are all treated as pure text. How do we save the output of an actual command like <code>ls -l</code>?</p>
+<p>A demonstration of what doesn’t work:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">TEST=</span>ls <span class="kw">-l</span></code></pre></div>
+<pre class="output"><code>-bash: -l: command not found</code></pre>
+<p>What does work:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">TEST=$(</span><span class="kw">ls</span> -l<span class="ot">)</span>
+<span class="kw">echo</span> <span class="ot">$TEST</span></code></pre></div>
+<pre class="output"><code>total 214132 -rwxr-xr-x. 1 hpc3293 hpcgtest 57 Feb 1 12:20 demo.sh -rw-r-----. 1 hpc3293 hpcgtest 721242 Jan 25 11:09 dmel_unique_protein_isoforms_fb_2016_01.tsv -rw-r--r--. 1 hpc3293 hpcgtest 159401627 Jan 20 14:32 Drosophila_melanogaster.BDGP5.77.gtf drwxr-xr-x. 2 hpc3293 hpcgtest 18 Jan 25 13:53 fastq -rw-r-----. 1 hpc3293 hpcgtest 56654230 Jan 25 11:09 fb_synonym_fb_2016_01.tsv -rw-r-----. 1 hpc3293 hpcgtest 1830516 Jan 25 11:09 gene_association.fb.gz -rw-r--r--. 1 hpc3293 hpcgtest 15 Jan 25 13:56 test.txt -rw-r--r--. 1 hpc3293 hpcgtest 270 Jan 25 14:40 word_counts.txt</code></pre>
+<p>Note that everything got printed on the same line. This is a feature, not a bug, as it allows us to use $(commands) inside lines of script without triggering line breaks (which would end our line of code and execute it prematurely).</p>
+<hr />
+<h2 id="loops">Loops</h2>
+<p>To end our lesson on scripts, we are going to learn how to write a simple for-loop. This will let us do the same string of commands on every file in a directory (or other stuff of that nature).</p>
+<p>for-loops generally have the following syntax:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="kw">for</span> <span class="kw">VAR</span> in first second third
+<span class="kw">do</span>
+    <span class="kw">echo</span> <span class="ot">$VAR</span>
+<span class="kw">done</span></code></pre></div>
+<p>When a for-loop gets run, the loop will run once for everything following the word <code>in</code>. In each iteration, the variable <code>$VAR</code> is set to a particular value for that iteration. In this case it will be set to <code>first</code> during the first iteration, <code>second</code> on the second, and so on. During each iteration, the code between <code>do</code> and <code>done</code> is performed.</p>
+<p>Let’s run the script we just wrote (I saved mine as <code>loop.sh</code>).</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">chmod</span> +x loop.sh
+<span class="kw">./loop.sh</span></code></pre></div>
+<pre class="output"><code>first
+second
+third</code></pre>
+<p>What if we wanted to loop over a shell variable, such as every file in the current directory? Shell variables work perfectly in for-loops.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="ot">FILES=$(</span><span class="kw">ls</span><span class="ot">)</span>
+<span class="kw">for</span> <span class="kw">VAR</span> in <span class="ot">$FILES</span>
+<span class="kw">do</span>
+        <span class="kw">echo</span> <span class="ot">$VAR</span>
+<span class="kw">done</span></code></pre></div>
+<pre class="output"><code>demo.sh
+dmel_unique_protein_isoforms_fb_2016_01.tsv
+Drosophila_melanogaster.BDGP5.77.gtf
+fastq
+fb_synonym_fb_2016_01.tsv
+gene_association.fb.gz
+loop.sh
+test.txt
+word_counts.txt</code></pre>
+<p>There’s actually even a shortcut to run on all files of a particular type, say all .tsv files:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="kw">for</span> <span class="kw">VAR</span> in *.tsv
+<span class="kw">do</span>
+        <span class="kw">echo</span> <span class="ot">$VAR</span>
+<span class="kw">done</span></code></pre></div>
+<pre class="output"><code>dmel_unique_protein_isoforms_fb_2016_01.tsv
+fb_synonym_fb_2016_01.tsv</code></pre>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="writing-our-own-scripts-and-loops"><span class="glyphicon glyphicon-pencil"></span>Writing our own scripts and loops</h2>
+</div>
+<div class="panel-body">
+<p><code>cd</code> to our <code>fastq</code> directory from earlier and write a loop to print off the name and first read (top 4 lines) of every fastq file in that directory.</p>
+<p>Is there a way to only run the loop on fastq files ending in <code>_1.fastq</code>?</p>
+</div>
+</section>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="concatenating-variables"><span class="glyphicon glyphicon-pencil"></span>Concatenating variables</h2>
+</div>
+<div class="panel-body">
+<p>Concatenating (i.e. mashing together) variables is quite easy to do. Simply add whatever you want to concatenate to the beginning or end of the shell variable after enclosing it in <code>{}</code> characters.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">FILE=</span>stuff.txt
+<span class="kw">echo</span> <span class="ot">${FILE}</span>.processed</code></pre></div>
+<pre class="output"><code>stuff.txt.processed</code></pre>
+<p>Can you write a script that prints off the name of every file in a directory with “.example” added to it?</p>
+</div>
+</section>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
 <h2 id="tricks-for-working-with-file-extensions"><span class="glyphicon glyphicon-pushpin"></span>Tricks for working with file extensions</h2>
 </div>
 <div class="panel-body">
-<p>Working with file extensions can be tough sometimes. Here are a couple examples that demonstrate how to retrieve various parts of a filename.</p>
+<p>Working with file extensions can be tough sometimes. Here are a couple examples that demonstrate how to retrieve various parts of a filename. You’re not required to memorize these or anything, although they come in useful from time to time.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">FILE=</span><span class="st">&quot;example.tar.gz&quot;</span>
 <span class="kw">echo</span> <span class="st">&quot;</span><span class="ot">${FILE%%</span>.*<span class="ot">}</span><span class="st">&quot;</span>
 <span class="kw">example</span>
@@ -83,6 +219,20 @@ drwxr-xr-x. 2 hpcxxxx hpcgyyyy        18 Jan 25 13:53 fastq
 <span class="kw">gz</span></code></pre></div>
 </div>
 </aside>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="special-permissions"><span class="glyphicon glyphicon-pencil"></span>Special permissions</h2>
+</div>
+<div class="panel-body">
+<p>What if we want to give different sets of users different permissions. <code>chmod</code> actually accepts special numeric codes instead of stuff like <code>chmod +x</code>. The numeric codes are as follows: read = 4, write = 2, execute = 1. For each user we will assign permissions based on the sum of these permissions (must be between 7 and 0).</p>
+<p>Let’s make an example file and give everyone permission to do everything with it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">touch</span> example
+<span class="kw">ls</span> -l example
+<span class="kw">chmod</span> 777 example
+<span class="kw">ls</span> -l example</code></pre></div>
+<p>How might we give ourselves permission to do everything with a file, but allow no one else to do anything with it.</p>
+</div>
+</section>
         </div>
       </div>
       </article>
