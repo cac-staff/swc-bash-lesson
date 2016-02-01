@@ -27,21 +27,76 @@
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
                     <a href="index.html"><h1 class="title">The Unix Shell</h1></a>
-          <h2 class="subtitle">HPC job submission and Sun Grid Engine</h2>
+          <h2 class="subtitle">Submitting jobs and transferring files</h2>
           <section class="objectives panel panel-warning">
 <div class="panel-heading">
 <h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
 </div>
 <div class="panel-body">
 <ul>
-<li>What is $PATH?</li>
 <li>Learn how to set up a shell script for job submission</li>
-<li>Learn how to select a machine to run software on</li>
+<li>Learn how to select a cluster to run software on</li>
+<li>What is $PATH?</li>
 <li>Submit a simple job to the scheduler</li>
-<li>Learn how to transfer files with sftp</li>
+<li>Learn how to transfer files to and from your computer with sftp</li>
 </ul>
 </div>
 </section>
+<p>At this point, we have learned all of the basics of using the shell. These skills will get you far on a normal UNIX system like OSX and most flavors of Linux. However, the system we are currently connected to is very different from a typical Linux install and handles big jobs somewhat differently.</p>
+<p>Our system has a special “login” node that users can pretty much do whatever on, and a whole bunch of “production” nodes meant to do the actual work. Each node is essentially a different Linux computer, each with its own set of processors and memory. Although it’s entirely possible to write a shell script to do stuff and then run it on the login node (which we’ve been doing so far), you won’t have access to the same resources as you would on the production nodes (and it’s not considered very polite to other users!). The login nodes are primarily for submitting jobs, retrieving data, short tests, and compiling software.</p>
+<p>We will need to make several modifications to the shell scripts we have been writing in order to get them to run on the production nodes. Specifically, we will need to format our scripts for use by Sun Grid Engine, which is the job scheduler used by HPCVL. Although the job schedulers differ between computing organizations, the general concepts remain the same. What we are going to do is add some special commands to tell Sun Grid Engine exactly what to do with our script and what kind of resources we will need. This allows the cluster to move your job to nodes where resources are available and have your scripts play nice with others’.</p>
+<h2 id="sun-grid-engine-sge-basics">Sun Grid Engine (SGE) basics</h2>
+<p>SGE uses a set of special comments in each shell script to pass instructions to the scheduler. Each instruction is prefaced with <code>#$</code>, and are generally placed near the top of the script.</p>
+<p>Let’s learn a couple of these <code>#$</code> instructions. Note that you don’t need to memorize these or even use all of them - what they do is specified on our wiki at <a href="http://wiki.hpcvl.org/index.php/FAQ:SGE" class="uri">http://wiki.hpcvl.org/index.php/FAQ:SGE</a>. There is another useful reference of SGE commands at <a href="https://kb.iu.edu/d/avgl" class="uri">https://kb.iu.edu/d/avgl</a>.</p>
+<ul>
+<li><p><code>#$ -S /bin/bash</code> - Specify our shell to SGE.</p></li>
+<li><p><code>#$ -cwd</code> - Tell SGE to start the job in the working directory that our job was submitted from.</p></li>
+<li><p><code>#$ -V</code> - pass all of our environment variables (any shell variable we’ve set in our current session) through to the job.</p></li>
+<li><p><code>#$ -N</code> - Assign an english name to our job (instead of just the numeric ID).</p></li>
+<li><p><code>#$ -o &lt;someFile&gt;</code> - Write <code>stdout</code> to a file. I usually just use something like <code>#$ -o $JOB_ID.o</code> so that every run of the same script has a unique output file.</p></li>
+<li><p><code>#$ -e &lt;someFile&gt;</code> - Same as <code>-o</code>, but for <code>stderr</code>.</p></li>
+<li><p><code>#$ -M hpcxxxx@localhost</code> - Specify an email address where the job scheduler can email your (generally hpcxxxx@localhost). On the next line, add something like <code>#$ -m be</code> for the scheduler to email you at the <strong>b</strong>eginning or <strong>e</strong>nd**** respectively.</p></li>
+<li><p><code>#$ -q abaqus.q</code> and <code>#$ -l qname=abaqus.q</code> ensure that your job will be scheduled on the SW (Linux cluster).</p></li>
+<li><p><code>#$ -pe shm.pe X</code> - Ask for “X” number of processors for your job.</p></li>
+<li><p><code>#$ -l mf=XG</code> - Ask for “X” gigabytes of memory for your job. It’s generally a good idea to do this if you need more than 5 gigabytes.</p></li>
+</ul>
+<p>That’s a lot to take in, isn’t it? Let’s just create a “template job”, which we can simply copy and edit for later job submissions.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="co"># stuff you&#39;ll probably never want to change</span>
+<span class="co">#$ -S /bin/bash</span>
+<span class="co">#$ -cwd</span>
+<span class="co">#$ -V</span>
+<span class="co">#$ -M yourUserName@localhost</span>
+<span class="co">#$ -m be</span>
+<span class="co">#$ -q abaqus.q</span>
+<span class="co">#$ -l qname=abaqus.q</span>
+
+<span class="co"># job specific stuff</span>
+<span class="co">#$ -N yourJobName</span>
+<span class="co">#$ -o $JOB_ID.o</span>
+<span class="co">#$ -e $JOB_ID.e</span>
+
+<span class="kw">echo</span> <span class="st">&quot;The actual commands for your job go here.&quot;</span></code></pre></div>
+<p>I saved this as <code>template.sh</code></p>
+<p>We can submit this job and have it get run with <code>qsub template.sh</code>. It will print out the <code>$JOB_ID</code> and tell you the job is submitted. Try this now.</p>
+<p>If we’re super fast, we can see what jobs of ours are running with <code>qstat -u ourUserName</code>. Our job may actually complete before we have the chance to run this, since <code>echo</code> should finish more or less instantaneously (if this happens we won’t see any output).</p>
+<p>We can delete a job using <code>qdel &lt;JOB_ID&gt;</code>, where <code>JOB_ID</code> is simply the job number we saw with <code>qsub</code> or <code>qstat</code>.</p>
+<h2 id="what-is-path-and-how-do-we-modify-it">What is $PATH, and how do we modify it?</h2>
+<p>When running our scripts before, we always had to specify the absolute path to our scripts (remember all that <code>./demo.sh</code> stuff from earlier?). Why did we have to do that for our script, whereas normal UNIX commands like <code>ls</code> or <code>cd</code> did not? This is due to a special shell variable called <code>$PATH</code>.</p>
+<p>What is <code>$PATH</code>, exactly?</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">echo</span> <span class="ot">$PATH</span></code></pre></div>
+<pre class="output"><code>/opt/n1ge6/bin/lx24-amd64:/usr/sbin:/sbin:/usr/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/local/sbin</code></pre>
+<p><code>$PATH</code> is a colon-delimited list of directories. Whenever you run <em>any command whatsoever</em> without specifying its path, your computer searches the directories on <code>$PATH</code> and runs what it finds. If the computer does not find a command on <code>$PATH</code>, it gives you the <code>-bash: xxxxx: command not found</code> error.</p>
+<p>We often want to use software that’s not on our <code>$PATH</code>. There are several ways of doing this:</p>
+<ul>
+<li><p><strong>Specify the relative/absolute path to your script or executable</strong> - As an example, if you had a program called <code>dostuff</code> installed in your home directory somewhere that you wanted to use, you could do so in your script with <code>~/path/dostuff</code> or <code>./dostuff</code> (if your script started in that directory).</p></li>
+<li><p><strong>Use preintalled software</strong> - We’ve installed a lot of extra software that’s available as <code>usepackage</code> entries. To see what’s available, type <code>use -l</code>. You’ll see a bunch of entries that look like <code>blast - Blast current version</code>. To use this entry, just add <code>use blast</code> to your script. You can then call <code>blast</code> as if it were on your <code>$PATH</code> (you can try typing <code>blastn</code> now).</p></li>
+<li><p><strong>Modify <code>$PATH</code> directly</strong> - <code>$PATH</code> is just a list of directories separated by a colon. You can easily add a directory to this with a command like <code>PATH=${PATH}:/directory/you/want/to/add</code>. Note that using the <code>#$ -V</code> option in your scripts will pass your current <code>$PATH</code> to your job.</p></li>
+</ul>
+<h2 id="transferring-files-to-and-from-hpcvl-using-sftp">Transferring files to and from HPCVL using <code>sftp</code></h2>
+<p>So, say at the end of the day we’ve done some work on the cluster. Now we want to take our files off of the cluster. We are going to do this using <code>sftp</code> (Secure File Transfer Protocol). <code>sftp</code> is a lot like <code>ssh</code> (what we are currently connected to the cluster with), only with a smaller list of commands we can use for transferring files.</p>
+<p>Open up a new terminal window. Note that people on Windows should immediately type in <code>cd MyDocuments</code> to get into their <code>My Documents</code> folder on Windows.</p>
         </div>
       </div>
       </article>
