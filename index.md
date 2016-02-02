@@ -21,7 +21,7 @@ At the end of this lesson, you should know all of the basics of using a computer
 3.  [Writing and reading files](j02-files.html)
 4.  [Wildcards and piping](j03-piping.html)
 5.  [Shell scripts, variables, and loops](j04-scripts.html)
-6.  [Working remotely on a HPC cluster](05-script.html)
+6.  [Working remotely on a HPC cluster](j05-hpc.html)
 
 ## Other Resources
 
