@@ -53,11 +53,15 @@ skim down examples, some are good
 + $(command)
 + shell script arguments - $@ - all arguments
 + basic for loops
-
 + concatenation with shell variables, {} for grouping
 + use quotes to make things robust vs. spaces
 
 script reading comprehension examples are great
+
+##05 jobs
++ what is $PATH
+
+
 
 ##06-find
 

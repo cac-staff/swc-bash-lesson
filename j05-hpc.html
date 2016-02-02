@@ -27,7 +27,7 @@
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
                     <a href="index.html"><h1 class="title">The Unix Shell</h1></a>
-          <h2 class="subtitle">Submitting jobs and transferring files</h2>
+          <h2 class="subtitle">Working remotely on a HPC cluster</h2>
           <section class="objectives panel panel-warning">
 <div class="panel-heading">
 <h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
@@ -94,9 +94,62 @@
 <li><p><strong>Use preintalled software</strong> - We’ve installed a lot of extra software that’s available as <code>usepackage</code> entries. To see what’s available, type <code>use -l</code>. You’ll see a bunch of entries that look like <code>blast - Blast current version</code>. To use this entry, just add <code>use blast</code> to your script. You can then call <code>blast</code> as if it were on your <code>$PATH</code> (you can try typing <code>blastn</code> now).</p></li>
 <li><p><strong>Modify <code>$PATH</code> directly</strong> - <code>$PATH</code> is just a list of directories separated by a colon. You can easily add a directory to this with a command like <code>PATH=${PATH}:/directory/you/want/to/add</code>. Note that using the <code>#$ -V</code> option in your scripts will pass your current <code>$PATH</code> to your job.</p></li>
 </ul>
+<h2 id="connecting-to-external-computers-with-ssh">Connecting to external computers with <code>ssh</code></h2>
+<p>We actually already did this at the beginning of the lesson to connect to the HPCVL network. I will give a better overview of what we did earlier. <code>ssh</code> connects you to an external computer and let you use it as if it were your own.</p>
+<p>This is how you connect to another computer with <code>ssh</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ssh</span> yourUserName@someInternetAddressOrIP</code></pre></div>
+<p>To connect to HPCVL, the command changes to:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ssh</span> hpcxxxx@sfnode0.hpcvl.queensu.ca
+
+<span class="co"># or using IP</span>
+<span class="kw">ssh</span> hpcxxxx@130.15.59.64</code></pre></div>
+<p>After ssh-ing to <code>sfnode0</code> and entering your password, you will be connected to the M9000 system (Solaris). You will usually want to use the SW system instead (Linux). To use the Linux cluster, <code>ssh</code> to the linux login node with <code>ssh swlogin1</code>. Note that all files are shared between both systems.</p>
+<p>One helpful tip is to always use <code>ssh -X</code> instead of simply <code>ssh</code>. The <code>-X</code> option enables X-forwarding. In plain English, this means that any pop-up windows you create on HPCVL are passed to your computer screen as well.</p>
+<p>To close an <code>ssh</code> connection, simply type <code>exit</code>.</p>
 <h2 id="transferring-files-to-and-from-hpcvl-using-sftp">Transferring files to and from HPCVL using <code>sftp</code></h2>
 <p>So, say at the end of the day we’ve done some work on the cluster. Now we want to take our files off of the cluster. We are going to do this using <code>sftp</code> (Secure File Transfer Protocol). <code>sftp</code> is a lot like <code>ssh</code> (what we are currently connected to the cluster with), only with a smaller list of commands we can use for transferring files.</p>
 <p>Open up a new terminal window. Note that people on Windows should immediately type in <code>cd MyDocuments</code> to get into their <code>My Documents</code> folder on Windows.</p>
+<p>Get an example file that you want to upload in a directory on your computer. It can be literally anything. In terminal/MobaXterm, <code>cd</code> to that directory.</p>
+<p>Now let’s connect to the cluster with <code>sftp</code> to transfer files.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sftp</span> hpcxxxx@sfnode0.hpcvl.queensu.ca</code></pre></div>
+<p>Once you login, you should see a prompt with something like:</p>
+<pre class="output"><code>Connected to sfnode0.hpcvl.queensu.ca.
+sftp&gt;</code></pre>
+<p><code>sftp</code> is very similar to the <code>bash</code> shell we get with <code>ssh</code>. To see a list of possible commands, simply type <code>help</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">help</span></code></pre></div>
+<pre class="output"><code>Available commands:
+bye                                Quit sftp
+cd path                            Change remote directory to &#39;path&#39;
+chgrp grp path                     Change group of file &#39;path&#39; to &#39;grp&#39;
+chmod mode path                    Change permissions of file &#39;path&#39; to &#39;mode&#39;
+chown own path                     Change owner of file &#39;path&#39; to &#39;own&#39;
+df [-hi] [path]                    Display statistics for current directory or
+                                   filesystem containing &#39;path&#39;
+exit                               Quit sftp
+get [-Ppr] remote [local]          Download file
+reget remote [local]            Resume download file
+reput [local] remote               Resume upload file
+help                               Display this help text
+
+[snip to save screen space]</code></pre>
+<p>You’ll see a lot of old, familiar commands like <code>cd</code> and <code>ls</code>, along with a few new ones. Note that a lot of these commands make reference to <code>local</code> and <code>remote</code> computers. We are actually connected to two computers at the same time: our own (at the directory where we called <code>sftp</code>), and a remote (at our home directory on <code>sfnode0</code>). A lot of our old commands now have two versions: a remote one, and a local one (usally prefixed with <code>l</code>). Let’s try a few of these out to get the hang of it.</p>
+<p>Important <code>sftp</code> commands (used the same way as before!):</p>
+<ul>
+<li><p><code>pwd</code> / <code>lpwd</code>: Print the remote working directory / our local working directory.</p></li>
+<li><p><code>cd</code> / <code>lcd</code>: Change remote working directory / local working directory.</p></li>
+<li><p><code>ls</code> / <code>lls</code>: List remote/local files.</p></li>
+<li><p><code>mkdir</code> / <code>lmkdir</code>: Create a remote / local directory</p></li>
+<li><p><code>put &lt;localFile&gt;</code>: Moves a file from your local working directory to the remote working directory. Can put multiple files by using <code>*</code> (example: <code>put *.txt</code>).</p></li>
+<li><p><code>get &lt;remoteFile</code>: “Gets” a file from the remote working directory and downloads it to your local working directory.</p></li>
+</ul>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="uploading-downloading-files"><span class="glyphicon glyphicon-pencil"></span>Uploading / downloading files</h2>
+</div>
+<div class="panel-body">
+<p>Upload a file (can be any file whatsoever) to your home directory on HPCVL. Now download the <code>demo.sh</code> shell script we wrote earlier to your computer.</p>
+</div>
+</section>
         </div>
       </div>
       </article>

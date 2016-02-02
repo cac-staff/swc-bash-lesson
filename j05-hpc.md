@@ -1,7 +1,7 @@
 ---
 layout: page
 title: The Unix Shell
-subtitle: Submitting jobs and transferring files
+subtitle: Working remotely on a HPC cluster
 minutes: 15
 ---
 
@@ -97,8 +97,86 @@ We often want to use software that's not on our `$PATH`. There are several ways 
 
 + **Modify `$PATH` directly** - `$PATH` is just a list of directories separated by a colon. You can easily add a directory to this with a command like `PATH=${PATH}:/directory/you/want/to/add`. Note that using the `#$ -V` option in your scripts will pass your current `$PATH` to your job.
 
+## Connecting to external computers with `ssh`
+
+We actually already did this at the beginning of the lesson to connect to the HPCVL network. I will give a better overview of what we did earlier. `ssh` connects you to an external computer and let you use it as if it were your own.
+
+This is how you connect to another computer with `ssh`:
+```{.bash}
+ssh yourUserName@someInternetAddressOrIP
+```
+
+To connect to HPCVL, the command changes to:
+```{.bash}
+ssh hpcxxxx@sfnode0.hpcvl.queensu.ca
+
+# or using IP
+ssh hpcxxxx@130.15.59.64
+```
+
+After ssh-ing to `sfnode0` and entering your password, you will be connected to the M9000 system (Solaris). You will usually want to use the SW system instead (Linux). To use the Linux cluster, `ssh` to the linux login node with `ssh swlogin1`. Note that all files are shared between both systems.
+
+One helpful tip is to always use `ssh -X` instead of simply `ssh`. The `-X` option enables X-forwarding. In plain English, this means that any pop-up windows you create on HPCVL are passed to your computer screen as well.
+
+To close an `ssh` connection, simply type `exit`.
+
 ## Transferring files to and from HPCVL using `sftp`
 
 So, say at the end of the day we've done some work on the cluster. Now we want to take our files off of the cluster. We are going to do this using `sftp` (Secure File Transfer Protocol). `sftp` is a lot like `ssh` (what we are currently connected to the cluster with), only with a smaller list of commands we can use for transferring files.
 
 Open up a new terminal window. Note that people on Windows should immediately type in `cd MyDocuments` to get into their `My Documents` folder on Windows.
+
+Get an example file that you want to upload in a directory on your computer. It can be literally anything. In terminal/MobaXterm, `cd` to that directory.
+
+Now let's connect to the cluster with `sftp` to transfer files.
+
+```{.bash}
+sftp hpcxxxx@sfnode0.hpcvl.queensu.ca
+```
+Once you login, you should see a prompt with something like:
+```{.output}
+Connected to sfnode0.hpcvl.queensu.ca.
+sftp>
+```
+
+`sftp` is very similar to the `bash` shell we get with `ssh`. To see a list of possible commands, simply type `help`.
+
+```{.bash}
+help
+```
+```{.output}
+Available commands:
+bye                                Quit sftp
+cd path                            Change remote directory to 'path'
+chgrp grp path                     Change group of file 'path' to 'grp'
+chmod mode path                    Change permissions of file 'path' to 'mode'
+chown own path                     Change owner of file 'path' to 'own'
+df [-hi] [path]                    Display statistics for current directory or
+                                   filesystem containing 'path'
+exit                               Quit sftp
+get [-Ppr] remote [local]          Download file
+reget remote [local]            Resume download file
+reput [local] remote               Resume upload file
+help                               Display this help text
+
+[snip to save screen space]
+```
+
+You'll see a lot of old, familiar commands like `cd` and `ls`, along with a few new ones. Note that a lot of these commands make reference to `local` and `remote` computers. We are actually connected to two computers at the same time: our own (at the directory where we called `sftp`), and a remote (at our home directory on `sfnode0`). A lot of our old commands now have two versions: a remote one, and a local one (usally prefixed with `l`). Let's try a few of these out to get the hang of it.
+
+Important `sftp` commands (used the same way as before!):
+
++ `pwd` / `lpwd`: Print the remote working directory / our local working directory.
+
++ `cd` / `lcd`: Change remote working directory / local working directory.
+
++ `ls` / `lls`: List remote/local files.
+
++ `mkdir` / `lmkdir`: Create a remote / local directory
+
++ `put <localFile>`: Moves a file from your local working directory to the remote working directory. Can put multiple files by using `*` (example: `put *.txt`).
+
++ `get <remoteFile`: "Gets" a file from the remote working directory and downloads it to your local working directory.
+
+> ## Uploading / downloading files {.challenge}
+> Upload a file (can be any file whatsoever) to your home directory on HPCVL. Now download the `demo.sh` shell script we wrote earlier to your computer.
