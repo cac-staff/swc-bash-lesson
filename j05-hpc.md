@@ -178,5 +178,7 @@ Important `sftp` commands (used the same way as before!):
 
 + `get <remoteFile`: "Gets" a file from the remote working directory and downloads it to your local working directory.
 
++ `bye` / `exit`: Either of these commands will quit your `sftp` session.
+
 > ## Uploading / downloading files {.challenge}
 > Upload a file (can be any file whatsoever) to your home directory on HPCVL. Now download the `demo.sh` shell script we wrote earlier to your computer.
