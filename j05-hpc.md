@@ -59,11 +59,6 @@ That's a lot to take in, isn't it? Let's just create a "template job", which we 
 #$ -q abaqus.q
 #$ -l qname=abaqus.q
 
-# job specific stuff
-#$ -N yourJobName
-#$ -o $JOB_ID.o
-#$ -e $JOB_ID.e
-
 echo "The actual commands for your job go here."
 ```
 

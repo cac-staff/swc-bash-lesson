@@ -72,11 +72,6 @@
 <span class="co">#$ -q abaqus.q</span>
 <span class="co">#$ -l qname=abaqus.q</span>
 
-<span class="co"># job specific stuff</span>
-<span class="co">#$ -N yourJobName</span>
-<span class="co">#$ -o $JOB_ID.o</span>
-<span class="co">#$ -e $JOB_ID.e</span>
-
 <span class="kw">echo</span> <span class="st">&quot;The actual commands for your job go here.&quot;</span></code></pre></div>
 <p>I saved this as <code>template.sh</code></p>
 <p>We can submit this job and have it get run with <code>qsub template.sh</code>. It will print out the <code>$JOB_ID</code> and tell you the job is submitted. Try this now.</p>
