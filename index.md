@@ -15,7 +15,7 @@ At the end of this lesson, you should know all of the basics of using a computer
 > ### On your own computer
 >
 > If you are on Linux or OSX, open up a Terminal window and you will be set to go!
-> If on Windows, please install [Git Bash](https://git-scm.com/downloads).
+> If on Windows, please install [Git Bash](https://git-scm.com/downloads). Your instructor will show you how to install nano (a text editor) during the lesson (download the lesson example data, unpack, run `install_nano.sh`).
 >
 > Once you have a terminal open up and ready to go, please download the [example data for today's lesson](https://github.com/cac-staff/swc-bash-lesson/blob/gh-pages/bash-lesson.tar.gz?raw=true).
 >
