@@ -11,8 +11,17 @@ At the end of this lesson, you should know all of the basics of using a computer
 > This lesson assumes no prior knowledge of computers or programming.
 
 > ## Getting ready {.getready}
+> 
+> ### On your own computer
 >
-> All of the software for today's lessons are preinstalled on the HPCVL systems. To connect to these systems, open up an SSH client (MobaXterm on Windows, Terminal on Linux/OSX). At the prompt, type the following then press `Enter`: `ssh -X yourUserName@sfnode0.hpcvl.queensu.ca`. You will be prompted for your password. Once you successfully enter your password, you will be on our system and ready to go!
+> If you are on Linux or OSX, open up a Terminal window and you will be set to go!
+> If on Windows, please install [Git Bash](https://git-scm.com/downloads).
+>
+> Once you have a terminal open up and ready to go, please download the [example data for today's lesson](https://github.com/cac-staff/swc-bash-lesson/blob/gh-pages/bash-lesson.tar.gz?raw=true).
+>
+> ### Remote access 
+>
+> All of the software for today's lessons are preinstalled on the CAC systems. To connect to these systems, open up an SSH client (MobaXterm on Windows, Terminal on Linux/OSX). At the prompt, type the following then press `Enter`: `ssh -X yourUserName@sfnode0.hpcvl.queensu.ca`. You will be prompted for your password. Once you successfully enter your password, you will be on our system and ready to go!
 
 ## Topics
 
